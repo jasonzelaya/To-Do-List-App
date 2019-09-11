@@ -1,20 +1,23 @@
 // Incorporate modules
 const express = require('express');
 const bodyParser = require('body-parser');
+const ejsLint = require('ejs-lint');
 
 // Initiate app
 const app = express();
+
+// Use EJS
+app.set('view engine', 'ejs');
 
 // Enable use of body-parser
 app.use(bodyParser.urlencoded({extended: true}));
 // Serve static files in "public" directory
 app.use(express.static('public'));
 
-// Use EJS
-app.set('view engine', 'ejs');
+
 
 // ----------------Global Variables--------------------
-let itemsList = [];
+let itemsList = ['Item 1', 'Item 2', 'Item 3'];
 // -------------------ITEMS LIST-----------------------
 // Get handler
 app.get('/', function(req, res) {
@@ -36,8 +39,10 @@ app.get('/', function(req, res) {
 
 
 app.post('/', function(req, res) {
-  let enteredItem = req.body.enteredItem;
-  itemsList.push(enteredItem);
+  // console.log(req.body);
+  let item = req.body.item;
+
+  itemsList.push(item);
   res.redirect('/');
 });
 
