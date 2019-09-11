@@ -13,10 +13,33 @@ app.use(express.static('public'));
 // Use EJS
 app.set('view engine', 'ejs');
 
+// ----------------Global Variables--------------------
+let itemsList = [];
+// -------------------ITEMS LIST-----------------------
+// Get handler
+app.get('/', function(req, res) {
+  // Get today's date
+  let newDate = new Date();
+  // Specify the desired date format for the title of the page
+  let options = {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  // Return the date as a string
+  let today = newDate.toLocaleDateString('en-US', options);
+
+  res.render('/', {newDate: newDate, newItem: itemsList});
+
+});
 
 
-
-
+app.post('/', function(req, res) {
+  let newItem = req.body.newItem;
+  itemsList.push(newItem);
+  redirect('/');
+});
 
 
 
