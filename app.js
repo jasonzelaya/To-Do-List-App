@@ -39,17 +39,17 @@ app.get('/', function(req, res) {
 app.post('/', function(req, res) {
   // console.log(req.body);
   // Grab the new item value the user entered
-  let item = req.body.item;
+  let listItem = req.body.item;
   // If the title of the page is "Work Day"
-  if (item === "Work Day") {
-    // Add the item to the Work Day list
-    workList.push(item);
-    // Then return to the root
+  if (req.body.listItem === "Work Day") {
+    // Add the listItem to the Work Day list
+    workList.push(listItem);
+    // Have the submit button send the user back to the "Work Day" list
     res.redirect('/work')
   } else {
-   // Add the new value to the root's list
-  itemsList.push(item);
-  // Return to the root
+   // Add listItem to the root's list
+  itemsList.push(listItem);
+  // Have the submit button send the user to the root list
   res.redirect('/');
   }
 
@@ -60,20 +60,20 @@ app.post('/', function(req, res) {
 
 // Get handler for the "work" list
 app.get('/work', function(req, res) {
-  // Get today's date
-  let today = date.currentDate();
+
   // Render the "work" page with an updated list from the root's post handler"
-  res.render('/work', {newDate: 'Work Day', newItem: itemsList});
+  res.render('index', {newDate: 'Work Day', newItem: workList});
 });
+
 
 // Post handler for the "work" page
 app.post('/work', function(req, res) {
   // Grab the new item value the user entered
-  let newItem = req.body.item;
+  let listItem = req.body.item;
   // Add the new item to the "Work Day" list
-  workList.push(newItem);
+  workList.push(listItem);
   // Return to the root
-  redirect('/');
+  res.redirect('/');
 });
 
 
