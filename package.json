@@ -1,0 +1,22 @@
+{
+  "name": "todo_list",
+  "version": "1.0.0",
+  "description": "To do list app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "to",
+    "do",
+    "list",
+    "app"
+  ],
+  "author": "Jason Zelaya",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1"
+  }
+}
