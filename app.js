@@ -30,15 +30,15 @@ app.get('/', function(req, res) {
   // Return the date as a string
   let today = newDate.toLocaleDateString('en-US', options);
 
-  res.render('/', {newDate: newDate, newItem: itemsList});
+  res.render('index', {newDate: today, newItem: itemsList});
 
 });
 
 
 app.post('/', function(req, res) {
-  let newItem = req.body.newItem;
-  itemsList.push(newItem);
-  redirect('/');
+  let enteredItem = req.body.enteredItem;
+  itemsList.push(enteredItem);
+  res.redirect('/');
 });
 
 
