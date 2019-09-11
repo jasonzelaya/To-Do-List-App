@@ -31,7 +31,7 @@ app.get('/', function(req, res) {
   // Get today's date
   let today = date.currentDate();
   // Pass values into index.ejs variables
-  res.render('index', {newDate: today, newItem: itemsList});
+  res.render('index', {listTitle: today, newItem: itemsList});
 
 });
 
@@ -62,7 +62,7 @@ app.post('/', function(req, res) {
 app.get('/work', function(req, res) {
 
   // Render the "work" page with an updated list from the root's post handler"
-  res.render('index', {newDate: 'Work Day', newItem: workList});
+  res.render('index', {listTitle: 'Work Day', newItem: workList});
 });
 
 
