@@ -31,7 +31,7 @@ let itemsSchema = new mongoose.Schema ({
 // Create a model
 let Item = mongoose.model("Item", itemsSchema);
 
-// Create 3 documents
+// Create 3 Item documents
 let item1 = new Item ({
   name: "Welcome to your To Do List!"
 });
@@ -63,7 +63,7 @@ Item.find(function(err, items) {
 let workItems = [];
 
 // -------------------ITEMS LIST-----------------------
-// GET handler for the root list
+// GET handler for root
 app.get("/", function(req, res) {
   // Send the items from the Item collection to index.ejs to render in the To Do list
   Item.find({}, function(err, items) {
@@ -83,29 +83,25 @@ app.get("/", function(req, res) {
       // Rerun "/'s" GET handler to ensure the array is rendered
       res.redirect("/");
     } else {
-    // Pass values into index.ejs
+    // Render updated values
       res.render("index", {listTitle: "Today", newListItems: items});
     }
   });
 
 });
 
-// POST handler
+// POST handler for root
 app.post("/", function(req, res) {
-  // Grab the new item value the user entered
-  let item = req.body.newItem;
-  // If the title of the page is "Work"
-  if (req.body.list === "Work") {
-    // Add the new item to the Work page's list
-    workItems.push(item);
-    // Have the submit button send the user back to the Work page
-    res.redirect("/work")
-  } else {
-   // Add the new item to the root's list
-  items.push(item);
-  // Have the submit button send the user to the root list
-  res.redirect("/");
-  }
+  // Grab item input text from index.ejs
+  let newItem = req.body.newItem
+  // Create an Item document
+  let itemName = new Item ({
+    name: newItem
+  });
+  // Save the document
+  itemName.save()
+  // Render itemName
+  res.redirect("/")
 });
 
 
@@ -113,7 +109,7 @@ app.post("/", function(req, res) {
 
 // GET handler for the Work page
 app.get("/work", function(req, res) {
-  // Pass values into index.ejs
+  // Render updated values
   res.render("index", {listTitle: "Work List", newListItems: workItems});
 });
 
