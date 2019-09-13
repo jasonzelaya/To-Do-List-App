@@ -47,25 +47,26 @@ let item3 = new Item ({
 // Create an array to hold the premade list items
 let defaultItems = [item1, item2, item3];
 
-Item.find(function(err, items) {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(items);
-  }
-  items.forEach(function(item) {
-    console.log(item)
-  });
+// Item.find(function(err, items) {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log(items);
+//   }
+//   items.forEach(function(item) {
+//     console.log(item)
+//   });
 
-});
+// });
 
 // Create an array to put the work page's items in
 let workItems = [];
 
 // -------------------ITEMS LIST-----------------------
+
 // GET handler for root
 app.get("/", function(req, res) {
-  // Send the items from the Item collection to index.ejs to render in the To Do list
+  // Find the items in the collection
   Item.find({}, function(err, items) {
     // Check if the "items" array is empty
     if (items.length === 0) {
@@ -90,6 +91,7 @@ app.get("/", function(req, res) {
 
 });
 
+
 // POST handler for root
 app.post("/", function(req, res) {
   // Grab item input text from index.ejs
@@ -105,9 +107,24 @@ app.post("/", function(req, res) {
 });
 
 
+// POST handler for the "delete" route
 app.post("/delete", function(req, res) {
-  console.log(req.body);
-})
+  // Grab the checkbox clicked from index.ejs
+  let checkedItemId = req.body.deleteItem;
+  // Find the item with a checked box via the item's id and remove it from the list
+  Item.findByIdAndRemove(checkedItemId, function(err) {
+    // Check if an error occurred
+    if (err) {
+      // Print the error to the console
+      console.log(err);
+    } else {
+      // Print message to confirm the item was deleted
+      console.log("Succesfully deleted item with _id: " + checkedItemId);
+      // Send the user back to the "to do" list
+      res.redirect("/");
+    }
+  });
+});
 
 // --------------------WORK LIST-----------------------
 
