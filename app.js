@@ -15,46 +15,78 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 // Create a new Mongo database in MongoDB
-mongoose.connect("mongod://localhost:27017/todolistDB", {
+mongoose.connect("mongodb://localhost:27017/todolistDB", {
   // Fix the URL string parser deprecation warning
   useNewUrlParser: true,
   // Fix Server Discovery and Monitoring Engine deprecation warning
   useUnifiedTopology: true
 });
 
-// -----------------------------------------------------------------
-
-let Schema = mongoose.Schema;
-
+// -------------------------Items----------------------------------------
 // Create a schema
-const itemsSchema = new Schema ({
-  name: String;
+let itemsSchema = new mongoose.Schema ({
+  name: String
 });
 
 // Create a model
-const Item = mongoose.model("Item", itemsSchema);
+let Item = mongoose.model("Item", itemsSchema);
 
 // Create 3 documents
-const item = new Item ({
-  {}
-);
+let item1 = new Item ({
+  name: "Welcome to your To Do List!"
+});
 
+let item2 = new Item ({
+  name: "Hit the + button to add a new item."
+});
 
+let item3 = new Item ({
+  name: "<-- Hit this checkbox to delete an item."
+});
 
+// Create an array to hold the premade list items
+let defaultItems = [item1, item2, item3];
 
+Item.find(function(err, items) {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(items);
+  }
+  items.forEach(function(item) {
+    console.log(item)
+  });
 
-// ----------------Global Variables--------------------
+});
 
-// Create an array to put the root's items in
-let items = ["Item 1", "Item 2", "Item 3"];
 // Create an array to put the work page's items in
 let workItems = [];
 
 // -------------------ITEMS LIST-----------------------
 // GET handler for the root list
 app.get("/", function(req, res) {
-  // Pass values into index.ejs variables
-  res.render("index", {listTitle: "Today", newListItems: items});
+  // Send the items from the Item collection to index.ejs to render in the To Do list
+  Item.find({}, function(err, items) {
+    // Check if the "items" array is empty
+    if (items.length === 0) {
+      // Insert the defaultItems values into the Item collection
+      Item.insertMany(defaultItems, function(err) {
+        // Check if an error has occurred
+        if (err) {
+          // Print the error to the console
+          console.log(err);
+        } else {
+          // Print the "success" message
+          console.log("Successfully inserted default items to DB");
+        }
+      });
+      // Rerun "/'s" GET handler to ensure the array is rendered
+      res.redirect("/");
+    } else {
+    // Pass values into index.ejs
+      res.render("index", {listTitle: "Today", newListItems: items});
+    }
+  });
 
 });
 
@@ -81,7 +113,7 @@ app.post("/", function(req, res) {
 
 // GET handler for the Work page
 app.get("/work", function(req, res) {
-  // Render the Work page with an updated list
+  // Pass values into index.ejs
   res.render("index", {listTitle: "Work List", newListItems: workItems});
 });
 
