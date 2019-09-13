@@ -5,17 +5,17 @@
 </div>
 
 <div class="box">
-  <% for(let i=0; i < newItem.length; i++) {%>
+  <% for (let i=0; i < newListItems.length; i++) { %>
     <div class="item">
       <input type="checkbox">
-        <p><%= newItem[i] %></p>
+        <p><%= newListItems[i] %></p>
     </div>
   <% } %>
 
 
   <form class="item" action="/" method="post">
-    <input type="text" name="item" placeholder="Enter Next Item" autocomplete="off">
-    <button type="submit" name="listItem" value="<%= listTitle %>">+</button>
+    <input type="text" name="newItem" placeholder="Enter Next Item" autocomplete="off">
+    <button type="submit" name="list" value="<%= listTitle %>">+</button>
   </form>
 </div>
 

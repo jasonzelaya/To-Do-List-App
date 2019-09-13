@@ -1,79 +1,99 @@
 // Incorporate modules
-const express = require('express');
-const bodyParser = require('body-parser');
-// My custom module
-const date = require(__dirname + '/date.js');
-
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 // Initiate app
 const app = express();
 
 // Use EJS
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 
 // Enable use of body-parser
 app.use(bodyParser.urlencoded({extended: true}));
-// Serve static files in "public" directory
-app.use(express.static('public'));
+// Serve static files in 'public' directory
+app.use(express.static("public"));
+
+// Create a new Mongo database in MongoDB
+mongoose.connect("mongod://localhost:27017/todolistDB", {
+  // Fix the URL string parser deprecation warning
+  useNewUrlParser: true,
+  // Fix Server Discovery and Monitoring Engine deprecation warning
+  useUnifiedTopology: true
+});
+
+// -----------------------------------------------------------------
+
+let Schema = mongoose.Schema;
+
+// Create a schema
+const itemsSchema = new Schema ({
+  name: String;
+});
+
+// Create a model
+const Item = mongoose.model("Item", itemsSchema);
+
+// Create 3 documents
+const item = new Item ({
+  {}
+);
+
+
 
 
 
 // ----------------Global Variables--------------------
 
 // Create an array to put the root's items in
-let itemsList = ['Item 1', 'Item 2', 'Item 3'];
+let items = ["Item 1", "Item 2", "Item 3"];
 // Create an array to put the work page's items in
-let workList = [];
+let workItems = [];
 
 // -------------------ITEMS LIST-----------------------
-// Get handler for the root list
-app.get('/', function(req, res) {
-  // Get today's date
-  let today = date.currentDate();
+// GET handler for the root list
+app.get("/", function(req, res) {
   // Pass values into index.ejs variables
-  res.render('index', {listTitle: today, newItem: itemsList});
+  res.render("index", {listTitle: "Today", newListItems: items});
 
 });
 
-// Post handler
-app.post('/', function(req, res) {
-  // console.log(req.body);
+// POST handler
+app.post("/", function(req, res) {
   // Grab the new item value the user entered
-  let listItem = req.body.item;
-  // If the title of the page is "Work Day"
-  if (req.body.listItem === "Work Day") {
-    // Add the listItem to the Work Day list
-    workList.push(listItem);
-    // Have the submit button send the user back to the "Work Day" list
-    res.redirect('/work')
+  let item = req.body.newItem;
+  // If the title of the page is "Work"
+  if (req.body.list === "Work") {
+    // Add the new item to the Work page's list
+    workItems.push(item);
+    // Have the submit button send the user back to the Work page
+    res.redirect("/work")
   } else {
-   // Add listItem to the root's list
-  itemsList.push(listItem);
+   // Add the new item to the root's list
+  items.push(item);
   // Have the submit button send the user to the root list
-  res.redirect('/');
+  res.redirect("/");
   }
-
 });
 
 
 // --------------------WORK LIST-----------------------
 
-// Get handler for the "work" list
-app.get('/work', function(req, res) {
-
-  // Render the "work" page with an updated list from the root's post handler"
-  res.render('index', {listTitle: 'Work Day', newItem: workList});
+// GET handler for the Work page
+app.get("/work", function(req, res) {
+  // Render the Work page with an updated list
+  res.render("index", {listTitle: "Work List", newListItems: workItems});
 });
 
 
-// Post handler for the "work" page
-app.post('/work', function(req, res) {
-  // Grab the new item value the user entered
-  let listItem = req.body.item;
-  // Add the new item to the "Work Day" list
-  workList.push(listItem);
+// POST handler for the Work page
+app.post("/work", function(req, res) {
+  // Grab the new item the user entered
+  let item = req.body.newItem;
+  // Add the new item to the Work page's list
+  workItems.push(item);
   // Return to the root
-  res.redirect('/');
+  res.redirect("/");
 });
 
 
