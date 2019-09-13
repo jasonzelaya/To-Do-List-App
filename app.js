@@ -105,6 +105,10 @@ app.post("/", function(req, res) {
 });
 
 
+app.post("/delete", function(req, res) {
+  console.log(req.body);
+})
+
 // --------------------WORK LIST-----------------------
 
 // GET handler for the Work page

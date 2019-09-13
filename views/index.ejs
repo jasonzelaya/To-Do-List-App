@@ -6,14 +6,17 @@
 
 <div class="box">
   <% newListItems.forEach(function(newListItem) { %>
-    <div class="item">
-      <input type="checkbox">
+    <!-- Remove items from the list -->
+    <form action="/delete" method="post">
+      <div class="item">
+        <input type="checkbox">
         <!-- Pass the name field values into the To Do list -->
         <p><%= newListItem.name %></p>
-    </div>
+      </div>
+    </form>
   <% }); %>
 
-
+  <!-- Add new items to the list -->
   <form class="item" action="/" method="post">
     <input type="text" name="newItem" placeholder="Enter Next Item" autocomplete="off">
     <button type="submit" name="list" value="<%= listTitle %>">+</button>
