@@ -22,13 +22,13 @@ mongoose.connect("mongodb://localhost:27017/todolistDB", {
   useUnifiedTopology: true
 });
 
-// -------------------------Items----------------------------------------
-// Create a schema
+// -------------------------Items Start----------------------------------------
+// Create an items schema
 let itemsSchema = new mongoose.Schema ({
   name: String
 });
 
-// Create a model
+// Create an Item model
 let Item = mongoose.model("Item", itemsSchema);
 
 // Create 3 Item documents
@@ -47,22 +47,24 @@ let item3 = new Item ({
 // Create an array to hold the premade list items
 let defaultItems = [item1, item2, item3];
 
-// Item.find(function(err, items) {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log(items);
-//   }
-//   items.forEach(function(item) {
-//     console.log(item)
-//   });
+// -------------------ITEMS End-----------------------
 
-// });
+// ------------------LIST START-----------------------
 
-// Create an array to put the work page's items in
-let workItems = [];
+// Create a list schema
+let listSchema = {
+  name: String,
+  // items value will be an array of items documents
+  items: [itemsSchema]
+});
 
-// -------------------ITEMS LIST-----------------------
+// Create a List model
+let List = mongoose.model("List", listSchema);
+
+
+// ------------------LIST END-------------------------
+
+
 
 // GET handler for root
 app.get("/", function(req, res) {
@@ -88,6 +90,14 @@ app.get("/", function(req, res) {
       res.render("index", {listTitle: "Today", newListItems: items});
     }
   });
+
+});
+
+
+// GET handler for the dynamic route
+app.get("/:customListName", function(req, res) {
+  // Store the dyanmic route path in a variable
+  let customListName = req.params.customListName;
 
 });
 
@@ -128,11 +138,13 @@ app.post("/delete", function(req, res) {
 
 // --------------------WORK LIST-----------------------
 
+
+
 // GET handler for the Work page
-app.get("/work", function(req, res) {
+// app.get("/work", function(req, res) {
   // Render updated values
-  res.render("index", {listTitle: "Work List", newListItems: workItems});
-});
+  // res.render("index", {listTitle: "Work List", newListItems: workItems});
+// });
 
 
 // POST handler for the Work page
