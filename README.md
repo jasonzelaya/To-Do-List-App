@@ -1,5 +1,5 @@
 # To Do List Web App
-#### --Status: Active
+#### --Status: Completed
 ### Technologies
 * Node.js
 * JavaScript
@@ -8,6 +8,11 @@
 * Body-Parser
 * Lodash
 * MongoDB
+* MongoDB Atlas
 * Mongoose
+* Heroku
 * HTML
 * CSS
+
+## Deployed Web App
+https://powerful-castle-33744.herokuapp.com
