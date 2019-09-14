@@ -2,6 +2,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const _ = require("lodash");
 
 // Initiate app
 const app = express();
@@ -9,9 +10,9 @@ const app = express();
 // Use EJS
 app.set("view engine", "ejs");
 
-// Enable use of body-parser
+// Use Body-Parser
 app.use(bodyParser.urlencoded({extended: true}));
-// Serve static files in 'public' directory
+// Serve static files in the 'public' directory
 app.use(express.static("public"));
 
 // Create a new Mongo database in MongoDB
@@ -96,8 +97,8 @@ app.get("/", function(req, res) {
 
 // GET handler for the dynamic route
 app.get("/:customListName", function(req, res) {
-  // Store the dyanmic route path in a variable
-  let customListName = req.params.customListName;
+  // Titlecase and store the dynamic route path in a variable
+  let customListName = _.capitalize(req.params.customListName);
   // Check to see if the route entered matches an existing document's name
   List.findOne({name: customListName}, function(err, foundList){
     // Check for errors
@@ -130,7 +131,7 @@ app.get("/:customListName", function(req, res) {
 app.post("/", function(req, res) {
   // Grab item input text from index.ejs
   let newItem = req.body.newItem;
-  // Grab the submit button list from index.ejs
+  // Grab the list the submit button is adding the item to
   let listName = req.body.list;
   // Create an Item document
   let itemName = new Item ({
@@ -159,12 +160,12 @@ app.post("/", function(req, res) {
 
 // POST handler for the "delete" route
 app.post("/delete", function(req, res) {
-  // Grab the checkbox clicked from index.ejs
+  // Grab the checkbox clicked
   let checkedItemId = req.body.deleteItem;
   // Grab the list name for the dynamic route
   let listName = req.body.listName;
 
-  // Check if the item is being removed root list
+  // Check if the item is being removed from the root list
   if (listName === "Today") {
   // Find the item with a checked box via the item's id and remove it from the list
     Item.findByIdAndRemove(checkedItemId, function(err) {
@@ -173,7 +174,7 @@ app.post("/delete", function(req, res) {
         // Print the error to the console
         console.log(err);
       } else {
-        // Print message to confirm the item was deleted
+        // Print the message to confirm the item was deleted
         console.log("Succesfully deleted item with _id: " + checkedItemId);
         // Send the user back to the "to do" list
         res.redirect("/");
@@ -182,9 +183,12 @@ app.post("/delete", function(req, res) {
   } else {
     // Remove the item from a dynamic list
     List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList) {
+      // Check for errors
       if (err) {
+        // Print the errors to the console
         console.log(err);
       } else {
+          // Redirect to the dynamic route
           res.redirect("/" + listName);
       }
     });
