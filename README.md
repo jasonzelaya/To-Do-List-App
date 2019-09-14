@@ -6,5 +6,7 @@
 * EJS
 * Express
 * Body-Parser
+* MongoDB
+* Mongoose
 * HTML
 * CSS
