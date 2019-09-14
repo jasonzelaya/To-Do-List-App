@@ -64,6 +64,7 @@ let List = mongoose.model("List", listSchema);
 
 // ------------------LIST END-------------------------
 
+// -----------------HANDLERS--------------------------
 
 // GET handler for root
 app.get("/", function(req, res) {
@@ -128,15 +129,31 @@ app.get("/:customListName", function(req, res) {
 // POST handler for root
 app.post("/", function(req, res) {
   // Grab item input text from index.ejs
-  let newItem = req.body.newItem
+  let newItem = req.body.newItem;
+  // Grab the submit button list from index.ejs
+  let listName = req.body.list;
   // Create an Item document
   let itemName = new Item ({
     name: newItem
   });
-  // Save the document
-  itemName.save()
-  // Render itemName
-  res.redirect("/")
+
+    // Check if the list being added to was the root's list
+    if (listName === "Today") {
+      // Update the list
+      itemName.save();
+      // Send the user to the root route
+      res.redirect("/");
+    } else {
+       // Find the document to add the item to
+      List.findOne({name: listName}, function(err, foundList){
+        // Add the item to the document
+        foundList.items.push(itemName);
+        // Update the list
+        foundList.save();
+        // Redirect to the dynamic route
+        res.redirect("/" + listName);
+      });
+    }
 });
 
 
