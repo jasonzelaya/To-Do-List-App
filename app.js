@@ -161,19 +161,34 @@ app.post("/", function(req, res) {
 app.post("/delete", function(req, res) {
   // Grab the checkbox clicked from index.ejs
   let checkedItemId = req.body.deleteItem;
+  // Grab the list name for the dynamic route
+  let listName = req.body.listName;
+
+  // Check if the item is being removed root list
+  if (listName === "Today") {
   // Find the item with a checked box via the item's id and remove it from the list
-  Item.findByIdAndRemove(checkedItemId, function(err) {
-    // Check if an error occurred
-    if (err) {
-      // Print the error to the console
-      console.log(err);
-    } else {
-      // Print message to confirm the item was deleted
-      console.log("Succesfully deleted item with _id: " + checkedItemId);
-      // Send the user back to the "to do" list
-      res.redirect("/");
-    }
-  });
+    Item.findByIdAndRemove(checkedItemId, function(err) {
+      // Check if an error occurred
+      if (err) {
+        // Print the error to the console
+        console.log(err);
+      } else {
+        // Print message to confirm the item was deleted
+        console.log("Succesfully deleted item with _id: " + checkedItemId);
+        // Send the user back to the "to do" list
+        res.redirect("/");
+      }
+    });
+  } else {
+    // Remove the item from a dynamic list
+    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList) {
+      if (err) {
+        console.log(err);
+      } else {
+          res.redirect("/" + listName);
+      }
+    });
+  }
 });
 
 
