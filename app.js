@@ -56,14 +56,13 @@ let listSchema = {
   name: String,
   // items value will be an array of items documents
   items: [itemsSchema]
-});
+};
 
 // Create a List model
 let List = mongoose.model("List", listSchema);
 
 
 // ------------------LIST END-------------------------
-
 
 
 // GET handler for root
@@ -98,7 +97,31 @@ app.get("/", function(req, res) {
 app.get("/:customListName", function(req, res) {
   // Store the dyanmic route path in a variable
   let customListName = req.params.customListName;
-
+  // Check to see if the route entered matches an existing document's name
+  List.findOne({name: customListName}, function(err, foundList){
+    // Check for errors
+    if (err) {
+      // Print the error message
+      console.log(err);
+    } else {
+        // If the entered route matches an existing document's name
+        if(foundList) {
+          // Render the existing document that matched the route entered
+          res.render("index", {listTitle: foundList.name, newListItems: foundList.items});
+        } else {
+          // Create a new list
+          let list = new List({
+            // Name of the list = dynamic route entered
+            name: customListName,
+            items: defaultItems
+          });
+          // Save the list
+          list.save();
+          // Redirect back to the current route
+          res.redirect("/" + customListName);
+        }
+    }
+  });
 });
 
 
@@ -135,32 +158,6 @@ app.post("/delete", function(req, res) {
     }
   });
 });
-
-// --------------------WORK LIST-----------------------
-
-
-
-// GET handler for the Work page
-// app.get("/work", function(req, res) {
-  // Render updated values
-  // res.render("index", {listTitle: "Work List", newListItems: workItems});
-// });
-
-
-// POST handler for the Work page
-app.post("/work", function(req, res) {
-  // Grab the new item the user entered
-  let item = req.body.newItem;
-  // Add the new item to the Work page's list
-  workItems.push(item);
-  // Return to the root
-  res.redirect("/");
-});
-
-
-
-
-
 
 
 
