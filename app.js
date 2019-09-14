@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 // Create a new Mongo database in MongoDB
-mongoose.connect("mongodb://localhost:27017/todolistDB", {
+mongoose.connect("mongodb+srv://admin-jason:yTJosqxLjoJPyzg5@cluster0-cr2in.mongodb.net/todolistDB", {
   // Fix the URL string parser deprecation warning
   useNewUrlParser: true,
   // Fix Server Discovery and Monitoring Engine deprecation warning
@@ -196,8 +196,13 @@ app.post("/delete", function(req, res) {
 });
 
 
+// Listen on the correct port
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
 
 // Start server
-app.listen(/*process.env.PORT*/3000, function() {
-  console.log("Server is running on port 3000");
+app.listen(port, function() {
+  console.log("Server has started successfully");
 });
